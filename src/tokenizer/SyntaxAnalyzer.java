@@ -55,28 +55,28 @@ public class SyntaxAnalyzer {
         reservedWords.put(",",                  new TokenDelimiter("argdel"));
         reservedWords.put(":",                  new TokenDelimiter("casedel"));
         //Other reserves
-        reservedWords.put("+",                  new TokenOp("sumdiff"));
-        reservedWords.put("-",                  new TokenOp("sumdiff"));
-        reservedWords.put("/",                  new TokenOp("prodquo"));
-        reservedWords.put("*",                  new TokenOp("prodquo"));
-        reservedWords.put("%",                  new TokenOp("mod"));
-        reservedWords.put("^",                  new TokenOp("exp"));
-        reservedWords.put("++",                 new TokenOp("inc"));
-        reservedWords.put("dec",                new TokenOp("--"));
-        reservedWords.put("=",                  new TokenOp("assign"));
-        reservedWords.put("<",                  new TokenRelop("relop"));
-        reservedWords.put("<=",                 new TokenRelop("relop"));
-        reservedWords.put(">",                  new TokenRelop("relop"));
-        reservedWords.put("<>",                 new TokenRelop("relop"));
-        reservedWords.put(">=",                 new TokenRelop("relop"));
-        reservedWords.put("==",                 new TokenRelop("relop"));
+        reservedWords.put("+",                  new TokenOp("sumdiff","bad"));
+        reservedWords.put("-",                  new TokenOp("sumdiff","bmin"));
+        reservedWords.put("/",                  new TokenOp("prodquo","div"));
+        reservedWords.put("*",                  new TokenOp("prodquo", "mult"));
+        reservedWords.put("%",                  new TokenOp("mod", "mod"));
+        reservedWords.put("^",                  new TokenOp("exp", "exp"));
+        reservedWords.put("++",                 new TokenOp("inc", "inc"));
+        reservedWords.put("--",                 new TokenOp("dec", "dec"));
+        reservedWords.put("=",                  new TokenOp("assign", "ass"));
+        reservedWords.put("<",                  new TokenRelop("relop", "l"));
+        reservedWords.put("<=",                 new TokenRelop("relop","le"));
+        reservedWords.put(">",                  new TokenRelop("relop","g"));
+        reservedWords.put("<>",                 new TokenRelop("relop","ne"));
+        reservedWords.put(">=",                 new TokenRelop("relop","ge"));
+        reservedWords.put("==",                 new TokenRelop("relop","ee"));
         reservedWords.put("&",                  new TokenLogOp("and"));
         reservedWords.put("|",                  new TokenLogOp("or"));
         reservedWords.put("!",                  new TokenLogOp("not"));
         
         //Whitespace
-        reservedWords.put(" ",                  new TokenWhitespace("space"));
-        reservedWords.put("\n",                  new TokenWhitespace("eol"));
+        reservedWords.put(" ",                  new TokenWhitespace(" "));
+        reservedWords.put("\n",                 new TokenWhitespace("\n"));
         
         keywords = new HashMap();
         //Initialize KW maps
@@ -85,14 +85,23 @@ public class SyntaxAnalyzer {
             if(reader.hasNext()== false) return null;
             else{
                 char ch = reader.getNextChar();
-//                if(ch == ';') return reservedWords.get(ch);
-//                else if(ch == ' ') return reservedWords.get(ch);
-//                else return new Token();
                 switch(ch){
-                    case ';' : System.out.println("; matches");return reservedWords.get(ch);
-                    case ' ' : System.out.println("space matches");return reservedWords.get(ch);
-                    case '=' : System.out.println("assign matches");return reservedWords.get(ch);
-                    case '\n': System.out.println("\\n matches");return reservedWords.get(ch);
+                    case ';' :
+                    case ' ' :
+                    //case '=' :
+                    
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case ',':
+                    case ':':
+                    case '/':
+                    case '*':
+                    case '!':
+                    case '&':
+                    case '|':
+                    case '\n': return reservedWords.get(ch+"");
                     default : System.out.println("{" +ch+ "}" );return new Token();
                 }
             }
