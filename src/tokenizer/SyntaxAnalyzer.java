@@ -83,46 +83,47 @@ public class SyntaxAnalyzer {
         keywords = new HashMap();
         //Initialize KW maps
     }
-        public Token getNextToken(){
-            if(reader.hasNext()== false) return null;
-            else{
-                char ch = reader.getNextChar();
-                switch(ch){
-                    case ';' :
-                    case ' ' :
-                    //case '=' :
-                    
-                    case '(':
-                    case ')':
-                    case '[':
-                    case ']':
-                    case ',':
-                    case ':':
-                    case '/':
-                    case '*':
-                    case '!':
-                    case '&':
-                    case '|':
-                    case '\n': return reservedWords.get(ch+"");
-                    
-                    case 'n' : System.out.println(ch);String str = ch + identify(); 
-                        keywords.put(str,new TokenIdentifier(str)); System.out.println(keywords.get(str).toString());
-                        return keywords.get(str);
-                    default : System.out.println("{" +ch+ "}" );return new Token();
-                }
+    public Token getNextToken(){
+        if(reader.hasNext()== false) return null;
+        else{
+            char ch = reader.getNextChar();
+            switch(ch){
+                case ';' :
+                case ' ' :
+                case '(':
+                case ')':
+                case '[':
+                case ']':
+                case ',':
+                case ':':
+                case '/':
+                case '*':
+                case '!':
+                case '&':
+                case '|':
+                case '\n': return reservedWords.get(ch+"");
+
+                default : System.out.println("Error occured at row" + reader.getRow() + " col " + reader.getCol()) ;return null;
             }
         }
+    }
         
-        public String identify(){
-            String s = new String();
-            while(reader.hasNext()){
-                char ch = reader.getNextChar();
-                if(ALPHANUM.indexOf(ch) >=0){
-                    s+= ch;
-                }
-                else reader.putHold(ch);
+    public String identify(){
+        String s = new String();
+        System.out.println("Indentify " + ALPHANUM);
+        while(reader.hasNext()){
+            char ch = reader.getNextChar();
+            System.out.println("current char is [" + ch +  "]");
+            if(ALPHANUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
+                s+= ch;
+                System.out.println(s);
             }
-            return s;
+            else {
+                reader.backread();
+                break;
+            }
         }
+        return s;
+    }
     
 }

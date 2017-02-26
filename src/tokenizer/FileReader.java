@@ -6,19 +6,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Scanner;
+import java.io.PushbackReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class FileReader {
     private File inputFile;
-    private Reader r;
+    private PushbackReader r;
     private char currentChar;
-    private char onhold;
+//    private char onhold = '\0';
     private int row, col;
 
     public FileReader(String location) throws FileNotFoundException{
         inputFile = new File(location);
-        r = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
+        r = new PushbackReader(new BufferedReader(new InputStreamReader(new FileInputStream(inputFile))));
     }
     public int getRow(){
         return row;
@@ -29,15 +31,18 @@ public class FileReader {
     }
     
     public char getNextChar(){ 
-        if(currentChar=='\n') row++;
+        if(currentChar=='\n') {
+            row++;
+            col = 0;
+        }
         else col++;
+     
 
         return currentChar;
     }
     
     public boolean hasNext(){
         int x = 0;
-        if(onhold=='\0'){
             try{
                 x= r.read();
             }
@@ -48,18 +53,15 @@ public class FileReader {
                 currentChar = (char)x;
                 return true;
             } 
-        }
-        else{
-            currentChar=getHeld();
-            return true;
-        }
     }
-    public void putHold(char ch){
-        onhold = ch;
-    }
-    public char getHeld(){
-        char cha = onhold;
-        onhold='\0';
-        return cha;
+
+    public void backread(){
+        try {
+            System.out.println("Inside backread..." + (int)currentChar);
+            r.unread((int)currentChar);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
