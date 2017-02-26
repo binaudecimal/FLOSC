@@ -13,6 +13,7 @@ public class FileReader {
     private File inputFile;
     private Reader r;
     private char currentChar;
+    private char onhold;
     private int row, col;
 
     public FileReader(String location) throws FileNotFoundException{
@@ -36,17 +37,29 @@ public class FileReader {
     
     public boolean hasNext(){
         int x = 0;
-        try{
-            x= r.read();
+        if(onhold=='\0'){
+            try{
+                x= r.read();
+            }
+            catch(IOException e){System.err.println("Illegal read");
+            }
+            if(x==-1) return false;
+            else{
+                currentChar = (char)x;
+                return true;
+            } 
         }
-        catch(IOException e){System.err.println("Illegal read");
-        }
-        if(x==-1) return false;
         else{
-            currentChar = (char)x;
+            currentChar=getHeld();
             return true;
         }
-        
-        
+    }
+    public void putHold(char ch){
+        onhold = ch;
+    }
+    public char getHeld(){
+        char cha = onhold;
+        onhold='\0';
+        return cha;
     }
 }

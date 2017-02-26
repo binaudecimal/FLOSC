@@ -14,6 +14,6 @@ public class TokenIdentifier extends Token{
 //    }
     
     public String toString(){
-        return "[ID=" + getValue() + "]";
+        return "[ID=" + value + "]";
     }
 }

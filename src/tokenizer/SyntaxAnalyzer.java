@@ -9,6 +9,8 @@ public class SyntaxAnalyzer {
     FileReader reader;
     HashMap<String, Token> reservedWords;
     HashMap<String, Token> keywords;
+    final static String ALPHA = "abcdefghjiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    final static String ALPHANUM = ALPHA + "0123456789";
     
     public SyntaxAnalyzer(){
         try{
@@ -102,9 +104,25 @@ public class SyntaxAnalyzer {
                     case '&':
                     case '|':
                     case '\n': return reservedWords.get(ch+"");
+                    
+                    case 'n' : System.out.println(ch);String str = ch + identify(); 
+                        keywords.put(str,new TokenIdentifier(str)); System.out.println(keywords.get(str).toString());
+                        return keywords.get(str);
                     default : System.out.println("{" +ch+ "}" );return new Token();
                 }
             }
+        }
+        
+        public String identify(){
+            String s = new String();
+            while(reader.hasNext()){
+                char ch = reader.getNextChar();
+                if(ALPHANUM.indexOf(ch) >=0){
+                    s+= ch;
+                }
+                else reader.putHold(ch);
+            }
+            return s;
         }
     
 }
