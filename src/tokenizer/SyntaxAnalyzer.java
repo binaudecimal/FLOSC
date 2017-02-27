@@ -164,16 +164,40 @@ public class SyntaxAnalyzer {
                             }
                             //if it starts lower case, could be keyword
                             switch(ch){
-                                case 'b':if(reader.hasNext()){
+                                case 'b':if(reader.hasNext()){                  //check if has next on 'b'
                                             ch = reader.getNextChar();
-                                            if(ch=='r'); //nest into break
-                                            else{
+                                            if(ch=='r'){                        //nest into b-reak
+                                                if(reader.hasNext() && ((ch=reader.getNextChar())) == 'e'){    //nest into 'bre'-ak
+                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='a'){ //nest into "brea"
+                                                        if(reader.hasNext() && (ch = reader.getNextChar()) == 'k'){ //nest into 'break'
+                                                            if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){     //nest into break-anything else
+                                                                reader.backread();
+                                                                return verify(identifyWords("break"));
+                                                            }
+                                                            else return reservedWords.get("break");                                     //else its a break
+                                                        }
+                                                        else{                                                   //if brea-anything else
+                                                            reader.backread();
+                                                            return verify(identifyWords("brea"));
+                                                        }
+                                                    }
+                                                    else{                                  //if not a or no next char
+                                                        reader.backread();
+                                                        return verify(identifyWords("bre"));
+                                                    }
+                                                }
+                                                else{                             //if no 'br'hasnext !!
+                                                    reader.backread();
+                                                    return verify(identifyWords("br"));
+                                                }
+                                            }
+                                            else{                               //if b-any other
                                                 reader.backread();
-                                                String s = identifyWords(ch);
+                                                String s = identifyWords(ch+"");   //!!
                                             }    
                                         }
                                         else {
-                                            keywords.put("b", new TokenIdentifier("b"));
+                                            keywords.put("b", new TokenIdentifier("b"));    //if no next char on 'b'
                                             return keywords.get("b");   
                                         }
                                         
@@ -189,7 +213,7 @@ public class SyntaxAnalyzer {
                                 case 't':
                                 case 'w':
                                 default :if(ALPHAlow.indexOf(ch)>=0){           //if it starts with any other letter, it must be an ID
-                                            String s = identifyWords(ch);
+                                            String s = identifyWords(ch+"");
                                             keywords.put(s, new TokenIdentifier(s));
                                             return keywords.get(s);
                                         }
@@ -200,19 +224,20 @@ public class SyntaxAnalyzer {
         }
     }
         
-    public String identifyWords(char cha){
+    public String identifyWords(String str){
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
             if(ALPHANUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
                 s+= ch;
+              
             }
             else {
                 reader.backread();
                 break;
             }
         }
-        return cha + s;
+        return str + s;
     }
     
     public String identifyNum(){
@@ -228,6 +253,16 @@ public class SyntaxAnalyzer {
             }
         }
         return s;
+    }
+    public Token verify(String str){
+        Token t;
+        if((t=reservedWords.get(str)) != null) return t;
+        else if((t=keywords.get(str)) != null) return t;
+        else{
+            keywords.put(str, new TokenIdentifier(str));
+            return keywords.get(str);
+        }
+        
     }
     
 }
