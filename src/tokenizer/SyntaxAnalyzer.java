@@ -159,7 +159,7 @@ public class SyntaxAnalyzer {
                             }
                             else return reservedWords.get("<");
                 default : //if not a symbol, it could start with alphanum
-                            if(NUM.indexOf(ch)<=0){
+                            if(NUM.indexOf(ch)>=0){
                                 return new TokenLiteral(ch + identifyNum());
                             }
                             //if it starts lower case, could be keyword
@@ -192,10 +192,8 @@ public class SyntaxAnalyzer {
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            System.out.println("current char is [" + ch +  "]");
             if(ALPHANUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
                 s+= ch;
-                System.out.println(s);
             }
             else {
                 reader.backread();
@@ -209,10 +207,8 @@ public class SyntaxAnalyzer {
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            System.out.println("current char is [" + ch +  "]");
             if(NUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
                 s+= ch;
-                System.out.println(s);
             }
             else {
                 reader.backread();
