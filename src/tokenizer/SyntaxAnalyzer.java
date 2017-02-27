@@ -164,7 +164,19 @@ public class SyntaxAnalyzer {
                             }
                             //if it starts lower case, could be keyword
                             switch(ch){
-                                case 'b':
+                                case 'b':if(reader.hasNext()){
+                                            ch = reader.getNextChar();
+                                            if(ch=='r'); //nest into break
+                                            else{
+                                                reader.backread();
+                                                String s = identifyWords(ch);
+                                            }    
+                                        }
+                                        else {
+                                            keywords.put("b", new TokenIdentifier("b"));
+                                            return keywords.get("b");   
+                                        }
+                                        
                                 case 'd':
                                 case 'e':
                                 case 'f':
@@ -177,7 +189,7 @@ public class SyntaxAnalyzer {
                                 case 't':
                                 case 'w':
                                 default :if(ALPHAlow.indexOf(ch)>=0){           //if it starts with any other letter, it must be an ID
-                                            String s = ch + identifyWords();
+                                            String s = identifyWords(ch);
                                             keywords.put(s, new TokenIdentifier(s));
                                             return keywords.get(s);
                                         }
@@ -188,7 +200,7 @@ public class SyntaxAnalyzer {
         }
     }
         
-    public String identifyWords(){
+    public String identifyWords(char cha){
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
@@ -200,7 +212,7 @@ public class SyntaxAnalyzer {
                 break;
             }
         }
-        return s;
+        return cha + s;
     }
     
     public String identifyNum(){
