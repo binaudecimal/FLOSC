@@ -9,8 +9,11 @@ public class SyntaxAnalyzer {
     FileReader reader;
     HashMap<String, Token> reservedWords;
     HashMap<String, Token> keywords;
-    final static String ALPHA = "abcdefghjiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    final static String ALPHANUM = ALPHA + "0123456789";
+    final static String ALPHAlow = "abcdefghjiklmnopqrstuvwxyz";
+    final static String ALPHAup = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    final static String ALPHA = ALPHAlow + ALPHAup;
+    final static String NUM = "0123456789";
+    final static String ALPHANUM = ALPHA + NUM;
     
     public SyntaxAnalyzer(){
         try{
@@ -96,25 +99,118 @@ public class SyntaxAnalyzer {
                 case ']':
                 case ',':
                 case ':':
+                case '^':
+                case '%':
                 case '/':
                 case '*':
                 case '!':
                 case '&':
                 case '|':
-                case '\n': return reservedWords.get(ch+"");
+                case '\n':  return reservedWords.get(ch+"");
+                
+                case '+' :  if(reader.hasNext()){
+                                ch = reader.getNextChar();
+                                if(ch=='+') return reservedWords.get("++");
+                                else {
+                                    reader.backread();
+                                    return reservedWords.get("+");
+                                }
+                            }
+                            else return reservedWords.get("+");
+                
+                case '-' :  if(reader.hasNext()){
+                                ch = reader.getNextChar();
+                                if(ch=='-') return reservedWords.get("--");
+                                else {
+                                    reader.backread();
+                                    return reservedWords.get("-");
+                                }
+                            }
+                            else return reservedWords.get("-");
+                
+                case '=' :  if(reader.hasNext()){
+                                ch = reader.getNextChar();
+                                if(ch=='=') return reservedWords.get("==");
+                                else {
+                                    reader.backread();
+                                    return reservedWords.get("=");
+                                }
+                            }
+                            else return reservedWords.get("=");
+                
+                case '>' :  if(reader.hasNext()){
+                                ch = reader.getNextChar();
+                                if(ch=='=') return reservedWords.get(">=");
+                                else {
+                                    reader.backread();
+                                    return reservedWords.get(">");
+                                }
+                            }
+                            else return reservedWords.get(">");
+                
+                case '<' :  if(reader.hasNext()){
+                                ch = reader.getNextChar();
+                                if(ch=='>') return reservedWords.get("<>");
+                                else if(ch=='=') return reservedWords.get("<=");
+                                else {
+                                    reader.backread();
+                                    return reservedWords.get("<");
+                                }
+                            }
+                            else return reservedWords.get("<");
+                default : //if not a symbol, it could start with alphanum
+                            if(NUM.indexOf(ch)<=0){
+                                return new TokenLiteral(ch + identifyNum());
+                            }
+                            //if it starts lower case, could be keyword
+                            switch(ch){
+                                case 'b':
+                                case 'd':
+                                case 'e':
+                                case 'f':
+                                case 'i':
+                                case 'm':
+                                case 'n':
+                                case 'p':
+                                case 'r':
+                                case 's':
+                                case 't':
+                                case 'w':
+                                default :if(ALPHAlow.indexOf(ch)>=0){           //if it starts with any other letter, it must be an ID
+                                            String s = ch + identifyWords();
+                                            keywords.put(s, new TokenIdentifier(s));
+                                            return keywords.get(s);
+                                        }
+                            }
 
-                default : System.out.println("Error occured at row" + reader.getRow() + " col " + reader.getCol()) ;return null;
+                            return null;
             }
         }
     }
         
-    public String identify(){
+    public String identifyWords(){
         String s = new String();
-        System.out.println("Indentify " + ALPHANUM);
         while(reader.hasNext()){
             char ch = reader.getNextChar();
             System.out.println("current char is [" + ch +  "]");
             if(ALPHANUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
+                s+= ch;
+                System.out.println(s);
+            }
+            else {
+                reader.backread();
+                break;
+            }
+        }
+        return s;
+    }
+    
+    public String identifyNum(){
+        String s = new String();
+        while(reader.hasNext()){
+            char ch = reader.getNextChar();
+            System.out.println("current char is [" + ch +  "]");
+            if(NUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
                 s+= ch;
                 System.out.println(s);
             }

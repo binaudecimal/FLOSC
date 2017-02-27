@@ -16,7 +16,7 @@ public class FileReader {
     private PushbackReader r;
     private char currentChar;
 //    private char onhold = '\0';
-    private int row, col;
+    private int row =1, col=1;
 
     public FileReader(String location) throws FileNotFoundException{
         inputFile = new File(location);
@@ -45,6 +45,7 @@ public class FileReader {
         int x = 0;
             try{
                 x= r.read();
+//                System.out.println("Hasnext function " + x + " row " + getRow() + " col " + getCol());
             }
             catch(IOException e){System.err.println("Illegal read");
             }
@@ -57,7 +58,8 @@ public class FileReader {
 
     public void backread(){
         try {
-            System.out.println("Inside backread..." + (int)currentChar);
+            col--;
+            //System.out.println("Inside backread..." + (int)currentChar);
             r.unread((int)currentChar);
             
         } catch (IOException ex) {
