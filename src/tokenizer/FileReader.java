@@ -67,4 +67,12 @@ public class FileReader {
         }
     }
     
+    public void skip(){
+        try {
+            r.skip(1);
+        } catch (IOException ex) {
+            System.out.println("Reached end of file");
+        }
+    }
+    
 }

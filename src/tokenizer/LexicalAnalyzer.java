@@ -5,7 +5,7 @@ import java.util.HashMap;
 import jdk.nashorn.internal.runtime.regexp.joni.EncodingHelper;
 
 
-public class SyntaxAnalyzer {
+public class LexicalAnalyzer {
     
     FileReader reader;
     HashMap<String, Token> reservedWords;
@@ -14,9 +14,11 @@ public class SyntaxAnalyzer {
     final static String ALPHAup = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     final static String ALPHA = ALPHAlow + ALPHAup;
     final static String NUM = "0123456789";
-    final static String ALPHANUM = ALPHA + NUM;
+    final static String ALPHANUM = ALPHA + NUM + "_";
+    final static String DELIMITERSclose= " \n\t)}];&|!,:+-*/^%";
+    final static String DELIMITERSopen = "({[";
     
-    public SyntaxAnalyzer(){
+    public LexicalAnalyzer(){
         try{
             reader = new FileReader("src/sampleProgram");
         }
@@ -71,6 +73,8 @@ public class SyntaxAnalyzer {
         reservedWords.put(")",                  new TokenDelimiter("rightparen"));
         reservedWords.put("[",                  new TokenDelimiter("leftbracket"));
         reservedWords.put("]",                  new TokenDelimiter("rightbracket"));
+        reservedWords.put("{",                  new TokenDelimiter("leftbrace"));
+        reservedWords.put("}",                  new TokenDelimiter("rightbrace"));
         reservedWords.put(",",                  new TokenDelimiter("argdel"));
         reservedWords.put(":",                  new TokenDelimiter("casedel"));
         //Other reserves
@@ -96,6 +100,7 @@ public class SyntaxAnalyzer {
         //Whitespace
         reservedWords.put(" ",                  new TokenWhitespace(" "));
         reservedWords.put("\n",                 new TokenWhitespace("\n"));
+        reservedWords.put("comment",            new TokenWhitespace("comment"));
         
         keywords = new HashMap();
         //Initialize KW maps
@@ -105,23 +110,25 @@ public class SyntaxAnalyzer {
         else{
             char ch = reader.getNextChar();
             switch(ch){
-                case ';' :
+                case '~': return readComment();
                 case ' ' :
+                case '\n':
+                case ';' :
                 case '(':
                 case ')':
                 case '[':
                 case ']':
+                case '{':
+                case '}':
                 case ',':
                 case ':':
+                case '!':
+                case '&':
+                case '|':     
                 case '^':
                 case '%':
                 case '/':
-                case '*':
-                case '!':
-                case '&':
-                case '|':
-                case '\n':  return reservedWords.get(ch+"");
-                
+                case '*': return reservedWords.get(ch+"");
                 case '+' :  if(reader.hasNext()){
                                 ch = reader.getNextChar();
                                 if(ch=='+') return reservedWords.get("++");
@@ -577,31 +584,28 @@ public class SyntaxAnalyzer {
                                                         if(reader.hasNext()){
                                                             if(reader.getNextChar()=='c'){
                                                                 if(reader.hasNext()){
-                                                                    if(reader.hasNext()){
-                                                                        if(reader.getNextChar()=='t'){
-                                                                            if(reader.hasNext()){
-                                                                                if(reader.getNextChar()=='i'){
-                                                                                    if(reader.hasNext()){
-                                                                                        if(reader.getNextChar()=='o'){
-                                                                                            if(reader.hasNext()){
-                                                                                                if(reader.getNextChar()=='n'){
-                                                                                                    if(reader.hasNext()){
-                                                                                                        return backVerify("function");                                                                                                    }
-                                                                                                    else return reservedWords.get("function");
-                                                                                                }
-                                                                                                else return backVerify("functio");
+                                                                    if(reader.getNextChar()=='t'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='i'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='o'){
+                                                                                        if(reader.hasNext()){
+                                                                                            if(reader.getNextChar()=='n'){
+                                                                                                if(reader.hasNext()){
+                                                                                                    return backVerify("function");                                                                                                    }
+                                                                                                else return reservedWords.get("function");
                                                                                             }
-                                                                                            else return verify(identifyWords("functio"));
+                                                                                            else return backVerify("functio");
                                                                                         }
-                                                                                        else return backVerify("functi");
+                                                                                        else return verify(identifyWords("functio"));
                                                                                     }
-                                                                                    else return verify(identifyWords("functi"));
+                                                                                    else return backVerify("functi");
                                                                                 }
-                                                                                else return backVerify("funct");
+                                                                                else return verify(identifyWords("functi"));
                                                                             }
-                                                                            else return verify(identifyWords("funct"));
+                                                                            else return backVerify("funct");
                                                                         }
-                                                                        else return backVerify("func");
+                                                                        else return verify(identifyWords("funct"));
                                                                     }
                                                                     else return backVerify("func");
                                                                 }
@@ -1195,24 +1199,38 @@ public class SyntaxAnalyzer {
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            if(ALPHANUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
+            System.out.println(" ch " + ch + " " + DELIMITERSopen.indexOf(ch));
+            if(ALPHANUM.indexOf(ch) >=0 | DELIMITERSopen.indexOf(ch)>=0 && DELIMITERSclose.indexOf(ch)<0){
                 s+= ch;
-              
+                if(DELIMITERSopen.indexOf(ch)>=0){
+                    reader.backread();
+                    break;
+                }
             }
             else {
                 reader.backread();
                 break;
             }
         }
+        System.out.println("Before returning " + str + s);
         return str + s;
     }
     
     public String identifyNum(){
         String s = new String();
+        int dotted = 0;
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            if(NUM.indexOf(ch) >=0 & ch!= '\n' & ch!= ' '){
-                s+= ch;
+            if(NUM.indexOf(ch) >=0 & (DELIMITERSclose + DELIMITERSopen).indexOf(ch) <0){
+                if(ch=='.'  & dotted==0){
+                    s+= ch;
+                    dotted++;
+                }
+                else{
+                    reader.backread();
+                    break;
+                }
+                
             }
             else {
                 reader.backread();
@@ -1223,6 +1241,23 @@ public class SyntaxAnalyzer {
     }
     public Token verify(String str){
         Token t;
+        //check if func, array, or enum
+
+//        if(str.indexOf('(')>=0 | str.indexOf('{')>=0 | str.indexOf('[')>=0){
+//            if(str.indexOf('(')>=0){             //must be a function
+//                str = str.replace('(', '\0');
+//                if(keywords.get(str) == null) keywords.put(str, new TokenFunctionIdentifier(str));
+//            }
+//            else if(str.indexOf('[')>=0){        //must be an array
+//                str = str.replace('[', '\0');
+//                if(keywords.get(str) == null) keywords.put(str, new TokenArrayIdentifier(str));
+//            }
+//            else if(str.indexOf('{')>=0){                               //should be enums
+//                str = str.replace('{', '\0');
+//                if(keywords.get(str) == null) keywords.put(str, new TokenEnumIdentifier(str));
+//            }
+//        }
+
         if((t=reservedWords.get(str)) != null) return t;
         else if((t=keywords.get(str)) != null) return t;
         else{
@@ -1235,6 +1270,14 @@ public class SyntaxAnalyzer {
     public Token backVerify(String str){
         reader.backread();
         return verify(identifyWords(str));
+    }
+    
+    public Token readComment(){
+            while(reader.hasNext()){
+                if(reader.getNextChar()=='~') break;
+                else reader.skip();
+            }
+        return reservedWords.get("comment");
     }
     
 }

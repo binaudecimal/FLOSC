@@ -10,6 +10,6 @@ public class TokenWhitespace extends Token{
     }
     
     public String toString(){
-        return value;
+        return "[" + value + "]";
     }
 }
