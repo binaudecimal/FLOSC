@@ -466,7 +466,158 @@ public class SyntaxAnalyzer {
                                         }
                                     
                                     //===========================================================================================end e nest
-                                case 'f':
+                                case 'f':if(reader.hasNext()){
+                                            
+                                            if(reader.getNextChar()=='a'){      //false
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='l'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='s'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='e'){
+                                                                        if(reader.hasNext()){
+                                                                            return backVerify("false");
+                                                                        }
+                                                                        else return reservedWords.get("false");
+                                                                    }
+                                                                    else return backVerify("fals");
+                                                                }
+                                                                else return verify(identifyWords("fals"));
+                                                            }
+                                                            else return backVerify("fal");
+                                                        }
+                                                        else return verify(identifyWords("fal"));
+                                                    }
+                                                    else return backVerify("fa");
+                                                }
+                                                else return verify(identifyWords("fa"));
+                                            }
+                                            else if(reader.getNextChar()=='i'){ //final, findLength
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='n'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='a'){      //@final
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='l'){
+                                                                        if(reader.hasNext()){
+                                                                            return backVerify("final");
+                                                                        }
+                                                                        else return reservedWords.get("final");
+                                                                    }
+                                                                    else return backVerify("fina");
+                                                                }
+                                                                else return verify(identifyWords("fina"));
+                                                            }
+                                                            else if(reader.getNextChar()=='d'){ //findLength
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='L'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='e'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='n'){
+                                                                                        if(reader.hasNext()){
+                                                                                            if(reader.getNextChar()=='g'){
+                                                                                                if(reader.hasNext()){
+                                                                                                    if(reader.getNextChar()=='t'){
+                                                                                                        if(reader.hasNext()){
+                                                                                                            if(reader.getNextChar()=='h'){
+                                                                                                                if(reader.hasNext()){
+                                                                                                                    return backVerify("findLength");
+                                                                                                                }
+                                                                                                                else return reservedWords.get("findLength");
+                                                                                                            }
+                                                                                                            else return backVerify("findLengt");
+                                                                                                        }
+                                                                                                        else return verify(identifyWords("findLengt"));
+                                                                                                    }
+                                                                                                    else return backVerify("findLeng");
+                                                                                                }
+                                                                                                else return verify(identifyWords("findLeng"));
+                                                                                            }
+                                                                                            else return backVerify("findLen");
+                                                                                        }
+                                                                                        else return verify(identifyWords("findLen"));
+                                                                                    }
+                                                                                    else return backVerify("findLe");
+                                                                                }
+                                                                                else return verify(identifyWords("findLe"));
+                                                                            }
+                                                                            else return backVerify("findL");
+                                                                        }
+                                                                        else return verify(identifyWords("findL"));
+                                                                    }
+                                                                    else return backVerify("find");
+                                                                }
+                                                                else return verify(identifyWords("find"));
+                                                            }
+                                                            else return backVerify("fin");
+                                                        }
+                                                        else return verify(identifyWords("fin"));
+                                                    }
+                                                    else return backVerify("fi");
+                                                }
+                                                else return verify(identifyWords("fi"));
+                                                
+                                            }
+                                            else if(reader.getNextChar()=='o'){ //for
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='r'){
+                                                        if(reader.hasNext()){
+                                                            return backVerify("for");
+                                                        }
+                                                        else return reservedWords.get("for");
+                                                    }
+                                                    else return backVerify("fo");
+                                                }
+                                                else return verify(identifyWords("fo"));
+                                            }
+                                            else if(reader.getNextChar()=='u'){ //function
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='n'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='c'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.hasNext()){
+                                                                        if(reader.getNextChar()=='t'){
+                                                                            if(reader.hasNext()){
+                                                                                if(reader.getNextChar()=='i'){
+                                                                                    if(reader.hasNext()){
+                                                                                        if(reader.getNextChar()=='o'){
+                                                                                            if(reader.hasNext()){
+                                                                                                if(reader.getNextChar()=='n'){
+                                                                                                    if(reader.hasNext()){
+                                                                                                        return backVerify("function");                                                                                                    }
+                                                                                                    else return reservedWords.get("function");
+                                                                                                }
+                                                                                                else return backVerify("functio");
+                                                                                            }
+                                                                                            else return verify(identifyWords("functio"));
+                                                                                        }
+                                                                                        else return backVerify("functi");
+                                                                                    }
+                                                                                    else return verify(identifyWords("functi"));
+                                                                                }
+                                                                                else return backVerify("funct");
+                                                                            }
+                                                                            else return verify(identifyWords("funct"));
+                                                                        }
+                                                                        else return backVerify("func");
+                                                                    }
+                                                                    else return backVerify("func");
+                                                                }
+                                                                else return verify(identifyWords("func"));
+                                                            }
+                                                            else return backVerify("fun");
+                                                        }
+                                                        else return verify(identifyWords("fun"));
+                                                    }
+                                                    else return backVerify("fu");
+                                                }
+                                                else return verify("fu");
+                                            }
+                                            else return backVerify("f");
+                                        }
+                                        else return verify(identifyWords("f"));
                                 case 'i':if(reader.hasNext()){
                                             ch = reader.getNextChar();
                                             if(ch == 'f'){
