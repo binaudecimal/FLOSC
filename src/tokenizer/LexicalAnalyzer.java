@@ -111,6 +111,9 @@ public class LexicalAnalyzer {
             char ch = reader.getNextChar();
             switch(ch){
                 case '~': return readComment();
+                case '\"': return readString();
+                case '\'': return readChar();
+                case '.': escapeError(); return new TokenError("Illegal start");
                 case ' ' :
                 case '\n':
                 case ';' :
@@ -1184,9 +1187,7 @@ public class LexicalAnalyzer {
                                         else return verify(identifyWords("w"));
                                     
                                 default :if(ALPHAlow.indexOf(ch)>=0){           //if it starts with any other letter, it must be an ID
-                                            String s = identifyWords(ch+"");
-                                            keywords.put(s, new TokenIdentifier(s));
-                                            return keywords.get(s);
+                                            return verify(identifyWords(ch + ""));
                                         }
                             }
 
@@ -1199,7 +1200,6 @@ public class LexicalAnalyzer {
         String s = new String();
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            System.out.println(" ch " + ch + " " + DELIMITERSopen.indexOf(ch));
             if(ALPHANUM.indexOf(ch) >=0 | DELIMITERSopen.indexOf(ch)>=0 && DELIMITERSclose.indexOf(ch)<0){
                 s+= ch;
                 if(DELIMITERSopen.indexOf(ch)>=0){
@@ -1212,7 +1212,6 @@ public class LexicalAnalyzer {
                 break;
             }
         }
-        System.out.println("Before returning " + str + s);
         return str + s;
     }
     
@@ -1222,7 +1221,10 @@ public class LexicalAnalyzer {
         while(reader.hasNext()){
             char ch = reader.getNextChar();
             if(NUM.indexOf(ch) >=0 & (DELIMITERSclose + DELIMITERSopen).indexOf(ch) <0){
-                if(ch=='.'  & dotted==0){
+                if (NUM.indexOf(ch)>=0){       //if no dot yet
+                    s+= ch;
+                } 
+                else if(ch=='.'  & dotted==0){
                     s+= ch;
                     dotted++;
                 }
@@ -1243,20 +1245,20 @@ public class LexicalAnalyzer {
         Token t;
         //check if func, array, or enum
 
-//        if(str.indexOf('(')>=0 | str.indexOf('{')>=0 | str.indexOf('[')>=0){
-//            if(str.indexOf('(')>=0){             //must be a function
-//                str = str.replace('(', '\0');
-//                if(keywords.get(str) == null) keywords.put(str, new TokenFunctionIdentifier(str));
-//            }
-//            else if(str.indexOf('[')>=0){        //must be an array
-//                str = str.replace('[', '\0');
-//                if(keywords.get(str) == null) keywords.put(str, new TokenArrayIdentifier(str));
-//            }
-//            else if(str.indexOf('{')>=0){                               //should be enums
-//                str = str.replace('{', '\0');
-//                if(keywords.get(str) == null) keywords.put(str, new TokenEnumIdentifier(str));
-//            }
-//        }
+        if(str.indexOf('(')>=0 | str.indexOf('{')>=0 | str.indexOf('[')>=0){
+            if(str.indexOf('(')>=0){             //must be a function
+                str = str.replace('(', '\0');
+                if(keywords.get(str) == null) keywords.put(str, new TokenFunctionIdentifier(str));
+            }
+            else if(str.indexOf('[')>=0){        //must be an array
+                str = str.replace('[', '\0');
+                if(keywords.get(str) == null) keywords.put(str, new TokenArrayIdentifier(str));
+            }
+            else if(str.indexOf('{')>=0){                               //should be enums
+                str = str.replace('{', '\0');
+                if(keywords.get(str) == null) keywords.put(str, new TokenEnumIdentifier(str));
+            }
+        }
 
         if((t=reservedWords.get(str)) != null) return t;
         else if((t=keywords.get(str)) != null) return t;
@@ -1278,6 +1280,66 @@ public class LexicalAnalyzer {
                 else reader.skip();
             }
         return reservedWords.get("comment");
+    }
+    
+    public Token readString(){
+        String s = "";
+        boolean hasnext = true;
+        while((hasnext = reader.hasNext())){
+            if(reader.getNextChar()!='\"') s+=reader.getNextChar();
+            else break;
+        }
+        if(hasnext == false) return new TokenError("Reached end of File");
+        else return new TokenLiteral(s);
+    }
+    
+    public void escapeError(){
+        System.out.print("[Error occured at row " + (reader.getRow()-1) + " col " + (reader.getCol()-1)+"]");
+        while(reader.hasNext()){
+            if((DELIMITERSclose + DELIMITERSopen).indexOf(reader.getNextChar()) >=0){
+                break;
+            }
+            else reader.skip();
+        }
+    }
+    
+    public Token readChar(){
+        if(reader.hasNext()){
+            if(reader.getNextChar()=='\\'){ //escape chars
+                if(reader.hasNext()){
+                    char ch;
+                    switch(reader.getNextChar()){
+                        case 'n': 
+                        case 't': 
+                        case '\\':
+                        case '\'':
+                        case '\"': ch = reader.getNextChar();
+                                    if(reader.hasNext()){
+                                        if(reader.getNextChar()!= '\''){
+                                            escapeError();
+                                            return new TokenError("Bad character");
+                                        }
+                                        else return new TokenLiteral(ch+"");
+                                    }
+                                    else return new TokenLiteral(ch+"");
+                        default: return new TokenError("Bad character");
+                    }
+                }
+                else return new TokenError("Dangling escape character");
+            }
+            else{   //regular chars
+                char ch = reader.getNextChar();
+                if(reader.hasNext()){
+                    if(reader.getNextChar()!='\''){ //if it doesnt end there
+                        escapeError();
+                        return new TokenError("Bad character");
+                    }
+                    else return new TokenLiteral(ch + "");
+                }
+                else return new TokenLiteral(ch+"");
+            }
+        }
+        else return new TokenError("Reached end of File");
     }
     
 }

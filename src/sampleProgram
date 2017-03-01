@@ -1,4 +1,6 @@
-enum x{);
+enum x[];
 main
     display()
+    string "something in here";
+'n '\n'
 end
