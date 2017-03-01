@@ -184,7 +184,8 @@ public class LexicalAnalyzer {
                             else return reservedWords.get("<");
                 default : //if not a symbol, it could start with alphanum
                             if(NUM.indexOf(ch)>=0){
-                                return new TokenLiteral(ch + identifyNum());
+                                reader.backread();
+                                return tokenNum();
                             }
                             //if it starts lower case, could be keyword
                             switch(ch){
@@ -1215,31 +1216,33 @@ public class LexicalAnalyzer {
         return str + s;
     }
     
-    public String identifyNum(){
+    public Token tokenNum(){
         String s = new String();
         int dotted = 0;
         while(reader.hasNext()){
             char ch = reader.getNextChar();
-            if(NUM.indexOf(ch) >=0 & (DELIMITERSclose + DELIMITERSopen).indexOf(ch) <0){
-                if (NUM.indexOf(ch)>=0){       //if no dot yet
-                    s+= ch;
-                } 
-                else if(ch=='.'  & dotted==0){
-                    s+= ch;
+            if((NUM + '.').indexOf(ch) >=0 & (DELIMITERSclose + DELIMITERSopen).indexOf(ch) <0){
+                //if no dot found
+                if(dotted==0 && ch!= '.') s+= ch;
+                //if dot found once
+                else if(dotted == 0 && ch =='.'){
                     dotted++;
+                    s+= ch;
                 }
-                else{
+                else if(dotted==1 && ch!= '.') s+= ch;
+                else if (dotted == 1 && ch =='.') {
                     reader.backread();
                     break;
                 }
-                
+                //if dot found twice
             }
-            else {
+            else {  //if not a num anymore
                 reader.backread();
                 break;
             }
         }
-        return s;
+        if(dotted == 0) return new TokenLiteral(s);
+        else return new TokenLiteral(s);
     }
     public Token verify(String str){
         Token t;
@@ -1319,9 +1322,9 @@ public class LexicalAnalyzer {
                                             escapeError();
                                             return new TokenError("Bad character");
                                         }
-                                        else return new TokenLiteral(ch+"");
+                                        else return new TokenLiteral("\\" + ch);
                                     }
-                                    else return new TokenLiteral(ch+"");
+                                    else return new TokenLiteral("\\" + ch);
                         default: return new TokenError("Bad character");
                     }
                 }

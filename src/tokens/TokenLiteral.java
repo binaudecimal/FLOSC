@@ -10,6 +10,6 @@ public class TokenLiteral extends Token{
     }
     
     public String toString(){
-        return "[LITERAL]";
+        return "[LIT=" + value + "]";
     }
 }
