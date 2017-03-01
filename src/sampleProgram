@@ -1,12 +1,15 @@
 function f1();
-enum someEnum{}
-number x[]
-main()
-    number x1 = 13;
+
+main
+    numbernum1 = 13;
     decimal y1 = 16.5;
-    decimal z = x1 + y1;
+    decimal z=x1+y1;
+    enum week{"MONDAY", "TUESDAY", "WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"};
+    ~this is a comment~
+    number x[] = [1,2,3,4,5];
     if(x1 <= y1 | x1<>z) return y1;
     else(do display("this is a string"));
+    f1();
     while(x1 <> 100) 10.5.9;
-    character ch = 'c';
+    character letter = 'c';
 end

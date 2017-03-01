@@ -189,293 +189,268 @@ public class LexicalAnalyzer {
                             }
                             //if it starts lower case, could be keyword
                             switch(ch){
-                                case 'b':if(reader.hasNext()){                  //check if has next on 'b'
-                                            ch = reader.getNextChar();
-                                            if(ch=='r'){                        //nest into b-reak
-                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'e'){    //nest into 'bre'-ak
-                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='a'){ //nest into "brea"
-                                                        if(reader.hasNext() && (ch = reader.getNextChar()) == 'k'){ //nest into 'break'
-                                                            if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){     //nest into break-anything else
-                                                                reader.backread();
-                                                                return verify(identifyWords("break"));
-                                                            }
-                                                            else return reservedWords.get("break");                                     //else its a break
-                                                        }
-                                                        else{                                                   //if brea-anything else
-                                                            reader.backread();
-                                                            return verify(identifyWords("brea"));
-                                                        }
-                                                    }
-                                                    else{                                  //if not a or no next char
-                                                        reader.backread();
-                                                        return verify(identifyWords("bre"));
-                                                    }
-                                                }
-                                                else{                             //if no 'br'hasnext !!
-                                                    reader.backread();
-                                                    return verify(identifyWords("br"));
-                                                }
-                                            }
-                                            
-                                            if(ch =='o'){                       //Nesting boolean
-                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'o'){ 
-                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='l'){ 
-                                                        if(reader.hasNext() && (ch = reader.getNextChar()) == 'e'){
-                                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 'a'){
-                                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'n'){
-                                                                    if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){   
-                                                                        reader.backread();
-                                                                        return verify(identifyWords("boolean"));
-                                                                    }
-                                                                    else return reservedWords.get("boolean");   
-                                                                }
-                                                                else{
-                                                                    reader.backread();
-                                                                    return verify(identifyWords("boolea"));
-                                                                }
-                                                            }   
-                                                            else{
-                                                                reader.backread();
-                                                                return verify(identifyWords("boole"));
-                                                            }
-                                                        }
-                                                        else{                                                 
-                                                            reader.backread();
-                                                            return verify(identifyWords("bool"));
-                                                        }
-                                                    }
-                                                    else{                                  
-                                                        reader.backread();
-                                                        return verify(identifyWords("boo"));
-                                                    }
-                                                }
-                                                else{                             
-                                                    reader.backread();
-                                                    return verify(identifyWords("bo"));
-                                                }
-                                            }
-                                            else{                               //if b-any other
-                                                reader.backread();
-                                                return verify(identifyWords(ch+""));
-                                            }
-                                        }
-                                        else {
-                                            keywords.put("b", new TokenIdentifier("b"));    //if no next char on 'b'
-                                            return keywords.get("b");   
-                                        }
-                                    //--------------------------------------------------------------------------------------------end b nest    
-                                case 'c':if(reader.hasNext() && (ch = reader.getNextChar()) == 'h'){                                                          //Nesting decimal
-                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 'a'){ 
-                                                if(reader.hasNext() && (ch=reader.getNextChar())=='r'){ 
-                                                    if(reader.hasNext() && (ch = reader.getNextChar()) == 'a'){
-                                                        if(reader.hasNext() && (ch=reader.getNextChar()) == 'c'){
-                                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 't'){
-                                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'e'){
-                                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='r'){
-                                                                        if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){   
-                                                                            reader.backread();
-                                                                            return verify(identifyWords("character"));
+                                case 'b'://boolean and break
+                                        if(reader.hasNext()){
+                                            //@boolean
+                                            if(reader.getNextChar()=='o'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='o'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='l'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='e'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='a'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='n'){
+                                                                                        if(reader.hasNext()){
+                                                                                            return backVerify("boolean");
+                                                                                        }
+                                                                                        else return verify("boolean");
+                                                                                    }
+                                                                                    else return backVerify("boolea");
+                                                                                }
+                                                                                else return verify(identifyWords("boolea"));
+                                                                            }
+                                                                            else return backVerify("boole");
                                                                         }
-                                                                        else return reservedWords.get("character");   
+                                                                        else return verify(identifyWords("boole"));
                                                                     }
-                                                                    else {
-                                                                        reader.backread();
-                                                                        return verify(identifyWords("characte"));
-                                                                    }
+                                                                    else return backVerify("bool");
                                                                 }
+                                                                else return verify(identifyWords("bool"));
                                                             }
-                                                            else{
-                                                                reader.backread();
-                                                                return verify(identifyWords("charact"));
-                                                            }
-                                                        }   
-                                                        else{
-                                                            reader.backread();
-                                                            return verify(identifyWords("charac"));
+                                                            else return backVerify("boo");
                                                         }
+                                                        else return verify(identifyWords("boo"));
                                                     }
-                                                    else{                                                 
-                                                        reader.backread();
-                                                        return verify(identifyWords("chara"));
+                                                    else return backVerify("bo");
+                                                }
+                                                else return verify("bo");
+                                            }
+                                            else if(reader.getNextChar()=='r'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='e'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='k'){
+                                                                if(reader.hasNext()){
+                                                                    return backVerify("break");
+                                                                }
+                                                                else return verify("break");
+                                                            }
+                                                            else return backVerify("brea");
+                                                        }
+                                                        else return verify("bre");
                                                     }
+                                                    else return backVerify("br");
                                                 }
-                                                else{                                  
-                                                    reader.backread();
-                                                    return verify(identifyWords("char"));
-                                                }
+                                                else return verify(identifyWords("br"));
                                             }
-                                            else{                             
-                                                reader.backread();
-                                                return verify(identifyWords("cha"));
-                                            }
-                                            
+                                            else return backVerify("b");
+                                            //@break
                                         }
-                                else {
-                                    return verify(identifyWords(ch+""));
-                                }
+                                        else return verify(identifyWords("b"));
+                                    //--------------------------------------------------------------------------------------------end b nest    
+                                case 'c':if(reader.hasNext()){
+                                            if(reader.getNextChar()=='h'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='a'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='r'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='a'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='c'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='t'){
+                                                                                        if(reader.hasNext()){
+                                                                                            if(reader.getNextChar()=='e'){
+                                                                                                if(reader.hasNext()){
+                                                                                                    if(reader.getNextChar()=='r'){
+                                                                                                        if(reader.hasNext()){
+                                                                                                            return backVerify("character");
+                                                                                                        }
+                                                                                                        else return verify("character");
+                                                                                                    }
+                                                                                                    else return backVerify("characte");
+                                                                                                }
+                                                                                                else return verify("characte");
+                                                                                            }
+                                                                                            else return backVerify("charact");
+                                                                                        }
+                                                                                        else return verify("charact");
+                                                                                    }
+                                                                                    else return backVerify("charac");
+                                                                                }
+                                                                                else return verify("charac");
+                                                                            }
+                                                                            else return backVerify("chara");
+                                                                        }
+                                                                        else return verify("chara");
+                                                                    }
+                                                                    else return backVerify("char");
+                                                                }
+                                                                else return verify("char");
+                                                            }
+                                                            else return backVerify("cha");
+                                                        }
+                                                        else return verify("cha");
+                                                    }
+                                                    else return backVerify("ch");
+                                                }
+                                                else return verify("ch");
+                                            }
+                                            else return backVerify("c");
+                                        }
+                                        else return verify(identifyWords("c"));
                                     //------------------------====================================================================end c nest
-                                case 'd': if(reader.hasNext()&&(ch = reader.getNextChar()) == 'o' | ch =='i' | ch=='e'){
-                                        if(ch =='e'){                                                           //Nesting decimal
-                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 'e'){ 
-                                                if(reader.hasNext() && (ch=reader.getNextChar())=='c'){ 
-                                                    if(reader.hasNext() && (ch = reader.getNextChar()) == 'i'){
-                                                        if(reader.hasNext() && (ch=reader.getNextChar()) == 'm'){
-                                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 'a'){
-                                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'l'){
-                                                                    if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){   
-                                                                        reader.backread();
-                                                                        return verify(identifyWords("decimal"));
+                                case 'd':if(reader.hasNext()){
+                                            if(reader.getNextChar()=='i'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='s'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='p'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='l'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='a'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='y'){
+                                                                                        if(reader.hasNext()){
+                                                                                            return backVerify("display");
+                                                                                        }
+                                                                                        else return verify("display");
+                                                                                    }
+                                                                                    else return backVerify("displa");
+                                                                                }
+                                                                                else return verify("displa");
+                                                                            }
+                                                                            else return backVerify("displ");
+                                                                        }
+                                                                        else return verify("displ");
                                                                     }
-                                                                    else return reservedWords.get("decimal");   
+                                                                    else return backVerify("disp");
                                                                 }
+                                                                else return verify("disp");
                                                             }
-                                                            else{
-                                                                reader.backread();
-                                                                return verify(identifyWords("decima"));
-                                                            }
-                                                        }   
-                                                        else{
-                                                            reader.backread();
-                                                            return verify(identifyWords("decim"));
+                                                            else return backVerify("dis");
                                                         }
+                                                        else return verify("dis");
                                                     }
-                                                    else{                                                 
-                                                        reader.backread();
-                                                        return verify(identifyWords("deci"));
-                                                    }
+                                                    else return backVerify("di");
                                                 }
-                                                else{                                  
-                                                    reader.backread();
-                                                    return verify(identifyWords("dec"));
-                                                }
+                                                else return verify("di");
                                             }
-                                            else{                             
-                                                reader.backread();
-                                                return verify(identifyWords("de"));
-                                            }
-                                        }
-                                        if(ch =='i'){                                           //Nesting display
-                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 's'){ 
-                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='p'){ 
-                                                        if(reader.hasNext() && (ch = reader.getNextChar()) == 'l'){
-                                                            if(reader.hasNext() && (ch=reader.getNextChar()) == 'a'){
-                                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 'y'){
-                                                                    if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){   
-                                                                        reader.backread();
-                                                                        return verify(identifyWords("display"));
+                                            else if(reader.getNextChar()=='e'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='c'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='i'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='m'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='a'){
+                                                                                if(reader.hasNext()){
+                                                                                    if(reader.getNextChar()=='l'){
+                                                                                        if(reader.hasNext()){
+                                                                                            return backVerify("decimal");
+                                                                                        }
+                                                                                        else return verify("decimal");
+                                                                                    }
+                                                                                    else return backVerify("decima");
+                                                                                }
+                                                                                else return verify("decima");
+                                                                            }
+                                                                            else return backVerify("decim");
+                                                                        }
+                                                                        else return verify("decim");
                                                                     }
-                                                                    else return reservedWords.get("display");   
+                                                                    else return backVerify("deci");
                                                                 }
-                                                                else{
-                                                                    reader.backread();
-                                                                    return verify(identifyWords("displa"));
-                                                                }
-                                                            }   
-                                                            else{
-                                                                reader.backread();
-                                                                return verify(identifyWords("displ"));
+                                                                else return verify("veri");
                                                             }
+                                                            else return backVerify("dec");
                                                         }
-                                                        else{                                                 
-                                                            reader.backread();
-                                                            return verify(identifyWords("disp"));
-                                                        }
+                                                        else return verify("dec");
                                                     }
-                                                    else{                                  
-                                                        reader.backread();
-                                                        return verify(identifyWords("dis"));
-                                                    }
+                                                    else return backVerify("de");
                                                 }
-                                                else{                             
-                                                    reader.backread();
-                                                    return verify(identifyWords("di"));
+                                                else return verify("de");
+                                            }
+                                            else if(reader.getNextChar()=='o'){
+                                                if(reader.hasNext()){
+                                                    return backVerify("do");
                                                 }
+                                                else return verify("do");
                                             }
-                                        if(ch=='o'){
-                                            if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){   
-                                                reader.backread();
-                                                return verify(identifyWords("do"));
-                                            }
-                                            else return reservedWords.get("do"); 
+                                            else return backVerify("d");
                                         }
-                                }
-                                else {
-                                    return verify(identifyWords(ch+""));
-                                }
-                                    
+                                        else return verify("d");
                                     //------------------------------------------------------------------------------------------end D nest
                                 case 'e':
-                                        if(reader.hasNext() && (ch=reader.getNextChar())=='l' | (ch=reader.getNextChar()) == 'n'){
-                                            if(ch=='l'){                                                        //nesting else
-                                                if(reader.hasNext() && (ch=reader.getNextChar()) == 's'){    
-                                                    if(reader.hasNext() && (ch=reader.getNextChar())=='e'){
-                                                        if(reader.hasNext() && (ch = reader.getNextChar()) == 'i'){ 
-                                                            if(reader.hasNext()&&(ch=reader.getNextChar())=='f'){
-                                                                if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){     
-                                                                    reader.backread();
-                                                                    return verify(identifyWords("elseif"));
+                                        if(reader.hasNext()){
+                                            //@else
+                                            //@elseif
+                                            if(reader.getNextChar()=='l'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='s'){
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='e'){
+                                                                if(reader.hasNext()){
+                                                                    if(reader.getNextChar()=='i'){
+                                                                        if(reader.hasNext()){
+                                                                            if(reader.getNextChar()=='f'){
+                                                                                if(reader.hasNext()){
+                                                                                    return backVerify("elseif");
+                                                                                }
+                                                                                else return verify("elseif");
+                                                                            }
+                                                                            else return backVerify("elsei");
+                                                                        }
+                                                                        else return verify("elsi");
+                                                                    }
+                                                                    else return  backVerify("else");
                                                                 }
-                                                                else return reservedWords.get("elseif");
+                                                                else return verify("else");
                                                             }
-                                                            else{
-                                                              reader.backread();
-                                                              return verify(identifyWords("elsei"));
-                                                            }
+                                                            else return backVerify("els");
                                                         }
-                                                        else if(ALPHANUM.indexOf((ch=reader.getNextChar()))>=0){                                                  
-                                                            reader.backread();
-                                                            return verify(identifyWords("else"));
-                                                        }
-                                                        else {
-                                                            reader.backread();
-                                                            return reservedWords.get("else");
-                                                        }
+                                                        else return verify("els");
                                                     }
-                                                    else{                                  
-                                                        reader.backread();
-                                                        return verify(identifyWords("els"));
-                                                    }
+                                                    else return backVerify("el");
                                                 }
-                                                else{                             
-                                                    reader.backread();
-                                                    return verify(identifyWords("el"));
-                                                }
+                                                else return verify("el");
                                             }
-                                            if(ch=='n'){
-                                                if(reader.hasNext() && (ch = reader.getNextChar()) == 'u' | ch=='d'){ 
-                                                    if(ch=='u'){
-                                                        if(reader.hasNext()&&(ch=reader.getNextChar())=='m'){
-                                                            if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){     
-                                                                reader.backread();
-                                                                return verify(identifyWords("enum"));
+                                            
+                                            //@end
+                                            //@enum
+                                            else if(reader.getNextChar()=='n'){
+                                                if(reader.hasNext()){
+                                                    if(reader.getNextChar()=='d'){
+                                                        if(reader.hasNext()){
+                                                            return backVerify("end");
+                                                        }
+                                                        else return verify("end");
+                                                    }
+                                                    else if (reader.getNextChar()=='u'){//enum
+                                                        if(reader.hasNext()){
+                                                            if(reader.getNextChar()=='m'){
+                                                                if(reader.hasNext()){
+                                                                    return backVerify("enum");
+                                                                }
+                                                                else return verify("enum");
                                                             }
-                                                            else return reservedWords.get("enum");
+                                                            else return backVerify("enu");
                                                         }
-                                                        else{
-                                                          reader.backread();
-                                                          return verify(identifyWords("enu"));
-                                                        }
+                                                        else return verify("enu");
                                                     }
-                                                    else if(ch=='d'){
-                                                        if(reader.hasNext() && ALPHANUM.indexOf((ch=reader.getNextChar())) >=0){
-                                                            reader.backread();
-                                                            return verify(identifyWords("end"));
-                                                        }
-                                                        else{
-                                                            return reservedWords.get("end");
-                                                        }
-                                                    }
+                                                    else return backVerify("en");
                                                 }
-                                                else{
-                                                    return reservedWords.get("en");
-                                                }
+                                                else return verify("en");
                                             }
+                                            else return backVerify("e");
                                         }
-                                        else {
-                                            reader.backread();
-                                            return verify(identifyWords("e"));
-                                        }
-                                    
+                                        else return verify("e");
                                     //===========================================================================================end e nest
                                 case 'f':if(reader.hasNext()){
                                             
@@ -724,7 +699,7 @@ public class LexicalAnalyzer {
                                                                             if(reader.getNextChar() == 'r'){
                                                                                 if(reader.hasNext()){
                                                                                     if(ALPHANUM.indexOf(reader.getNextChar())>=0){
-                                                                                        backVerify("number");
+                                                                                        return backVerify("number");
                                                                                     }
                                                                                     else return backVerify("number");
                                                                                 }
@@ -738,12 +713,12 @@ public class LexicalAnalyzer {
                                                                 }
                                                                 else return verify(identifyWords("numb"));
                                                             }
-                                                            else backVerify("num");
+                                                            else return backVerify("num");
                                                         } 
                                                         else return verify(identifyWords("num"));
                                                     }
                                                     else{
-                                                        backVerify("nu");
+                                                        return backVerify("nu");
                                                     }
                                                 }
                                                 else{
@@ -1250,15 +1225,15 @@ public class LexicalAnalyzer {
 
         if(str.indexOf('(')>=0 | str.indexOf('{')>=0 | str.indexOf('[')>=0){
             if(str.indexOf('(')>=0){             //must be a function
-                str = str.replace('(', '\0');
-                if(keywords.get(str) == null) keywords.put(str, new TokenFunctionIdentifier(str));
+                str = str.replace('(', '\0').trim();
+                if(keywords.get(str) == null && reservedWords.get(str)==null) keywords.put(str, new TokenFunctionIdentifier(str));
             }
-            else if(str.indexOf('[')>=0){        //must be an array
-                str = str.replace('[', '\0');
+            else if(str.indexOf('[')>=0 && reservedWords.get(str)==null){        //must be an array
+                str = str.replace('[', '\0').trim();
                 if(keywords.get(str) == null) keywords.put(str, new TokenArrayIdentifier(str));
             }
-            else if(str.indexOf('{')>=0){                               //should be enums
-                str = str.replace('{', '\0');
+            else if(str.indexOf('{')>=0 && reservedWords.get(str)==null){                               //should be enums
+                str = str.replace('{', '\0').trim();
                 if(keywords.get(str) == null) keywords.put(str, new TokenEnumIdentifier(str));
             }
         }
@@ -1278,9 +1253,11 @@ public class LexicalAnalyzer {
     }
     
     public Token readComment(){
+        inwhile:
             while(reader.hasNext()){
-                if(reader.getNextChar()=='~') break;
-                else reader.skip();
+                if(reader.getNextChar()=='~'){
+                    break inwhile;
+                }
             }
         return reservedWords.get("comment");
     }
@@ -1297,7 +1274,7 @@ public class LexicalAnalyzer {
     }
     
     public void escapeError(){
-        System.out.print("[Error occured at row " + (reader.getRow()-1) + " col " + (reader.getCol()-1)+"]");
+        System.out.print("[Error occured at row " + (reader.getRow()) + " col " + (reader.getCol()-1)+"]");
         while(reader.hasNext()){
             if((DELIMITERSclose + DELIMITERSopen + ' ' + '\n').indexOf(reader.getNextChar()) >=0){
                 break;

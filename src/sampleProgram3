@@ -1,0 +1,22 @@
+main
+    number val,power,result;
+
+    display("Input a number: ");
+    val= readNumber();
+    display("This number is raised to: ");
+    power = readNumber();
+
+    result = powerOfX(val, power);
+
+    display(val + " raised to " + power + " is " + result);
+end
+
+function powerOfX(number x, number pow)
+    number temp = x;
+    number i = 0;
+
+    while( i < pow)
+        temp = temp* x;
+    end
+    return temp;
+end

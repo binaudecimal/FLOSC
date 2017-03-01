@@ -1,0 +1,17 @@
+main
+    number digit1, digit2;
+    display("Input Value 1:");
+    digit1 = readNumber();
+    display("Input value 2: ");
+    digit2 = readNumber();
+    
+    if(digit1 > digit2)
+        display("The first input is larger than the second input.");
+        end
+    elseif (digit1 < digit2)
+        display("The first input is less than the second input.");
+        end
+    else
+        display("The first input is equal to the second input.");
+        end
+end
