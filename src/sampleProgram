@@ -1,6 +1,8 @@
-enum x[];
-main
-    display()
-    string "something in here";
-'n' '\n' 100.0.3
+function f1();
+enum someEnum{}
+number x[]
+main()
+    number x1 = 13;
+    decimal y1 = 16.5;
+    decimal z = x1 + y1;
 end

@@ -10,6 +10,6 @@ public class TokenDatatype extends Token{
     }
     
     public String toString(){
-        return "[" + value + "]";
+        return "[DT=" + value + "]";
     }
 }
