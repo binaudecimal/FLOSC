@@ -1299,7 +1299,6 @@ public class LexicalAnalyzer {
     public void escapeError(){
         System.out.print("[Error occured at row " + (reader.getRow()-1) + " col " + (reader.getCol()-1)+"]");
         while(reader.hasNext()){
-            System.out.print("[" + reader.getNextChar()+"]");
             if((DELIMITERSclose + DELIMITERSopen + ' ' + '\n').indexOf(reader.getNextChar()) >=0){
                 break;
             }

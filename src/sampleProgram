@@ -5,4 +5,8 @@ main()
     number x1 = 13;
     decimal y1 = 16.5;
     decimal z = x1 + y1;
+    if(x1 <= y1 | x1<>z) return y1;
+    else(do display("this is a string"));
+    while(x1 <> 100) 10.5.9;
+    character ch = 'c';
 end
